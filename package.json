@@ -1,0 +1,20 @@
+{
+  "name": "challenge-express",
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*.js": "prettier --write --ignore-unknown"
+  },
+  "devDependencies": {
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.3"
+  }
+}
