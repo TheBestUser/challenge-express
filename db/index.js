@@ -2,9 +2,10 @@
 
 const Sequelize = require('sequelize');
 const process = require('process');
+const migrate = require('./migrate');
+const seed = require('./seed');
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/database.json')[env];
-const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
@@ -20,11 +21,14 @@ if (config.use_env_variable) {
 
 const User = require('./models/user')(sequelize, Sequelize);
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+const bootstrap = async () => {
+  await migrate(sequelize, Sequelize);
+  await seed(sequelize, Sequelize);
+};
 
 module.exports = {
   sequelize,
   Sequelize,
+  bootstrap,
   User,
 };
