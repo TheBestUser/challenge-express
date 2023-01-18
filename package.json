@@ -1,14 +1,24 @@
 {
   "name": "challenge-express",
   "version": "0.0.0",
-  "main": "index.js",
+  "authors": [
+    {
+      "name": "Alexander Kuzmichev",
+      "email": "kuzmichev.96@gmail.com"
+    }
+  ],
   "license": "MIT",
   "private": true,
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "start": "node app/index.js",
+    "start:dev": "node --watch app/index.js"
   },
   "lint-staged": {
-    "**/*.js": "prettier --write --ignore-unknown"
+    "**/*.js": [
+      "eslint --format stylish --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "pg": "^8.8.0",
