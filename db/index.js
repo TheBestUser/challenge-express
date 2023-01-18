@@ -7,6 +7,8 @@ const seed = require('./seed');
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/database.json')[env];
 
+config.host = process.env.PG_HOST || config.host;
+
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
