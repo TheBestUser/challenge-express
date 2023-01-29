@@ -14,7 +14,7 @@ services:
     build:
       context: ./
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./app:/opt/build/app
       - ./config:/opt/build/config
@@ -24,4 +24,4 @@ services:
       PG_HOST: postgres
     depends_on:
       - postgres
-    entrypoint: ["npm", "run", "start:dev"]
+    entrypoint: ['npm', 'run', 'start:dev']
