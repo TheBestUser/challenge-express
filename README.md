@@ -2,8 +2,11 @@
 
 ## Usage
 
-Application provides a simple HTTP interface on URL
-`localhost:3000/api/users/update-balance`
+Application provides a simple HTTP interface
+
+POST: `localhost:3000/api/users/update-balance` – Update user balance
+
+GET: `localhost:3000/api/tasks` – Get processing tasks
 
 ### Docker
 
