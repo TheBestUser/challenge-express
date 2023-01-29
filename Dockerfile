@@ -13,4 +13,4 @@ COPY . .
 
 EXPOSE 3000
 
-ENTRYPOINT [ "node", "app/index.js" ]
+ENTRYPOINT [ "node", "server.js" ]

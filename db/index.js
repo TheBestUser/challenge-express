@@ -9,19 +9,32 @@ const config = require(__dirname + '/../config/database.json')[env];
 
 config.host = process.env.PG_HOST || config.host;
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    config,
-  );
-}
+/**
+ * @param {Partial<import('sequelize').Config>} options
+ * @returns {import('sequelize').Sequelize}
+ */
+const createConnection = (options = {}) => {
+  const configObj = {
+    ...config,
+    ...options,
+  };
 
-const User = require('./models/user')(sequelize, Sequelize);
+  return config.use_env_variable
+    ? new Sequelize(process.env[config.use_env_variable], configObj)
+    : new Sequelize(
+        config.database,
+        config.username,
+        config.password,
+        configObj,
+      );
+};
+
+const sequelize = createConnection();
+
+const models = {
+  User: require('./models/user')(sequelize, Sequelize),
+  Task: require('./models/task')(sequelize, Sequelize),
+};
 
 const bootstrap = async () => {
   await migrate(sequelize, Sequelize);
@@ -32,5 +45,6 @@ module.exports = {
   sequelize,
   Sequelize,
   bootstrap,
-  User,
+  createConnection,
+  ...models,
 };

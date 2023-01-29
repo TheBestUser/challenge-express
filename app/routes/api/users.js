@@ -1,7 +1,7 @@
 'use strict';
 
 const router = require('express').Router();
-const { UserService } = require('../../services/user');
+const { UserService } = require('../../services');
 const { check, validationResult } = require('express-validator');
 const { AppResponse, AppError } = require('../../types');
 
