@@ -31,7 +31,8 @@ services:
       IS_TASK_PRODUCER: true
       IS_TASK_QUEUE_MANAGER: true
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     entrypoint: ['npm', 'run', 'start:dev']
 
   worker:
@@ -39,7 +40,7 @@ services:
     build:
       context: ./
     deploy:
-      replicas: 2
+      replicas: 5
     volumes:
       - ./app:/opt/build/app
     environment:
@@ -47,5 +48,6 @@ services:
       PG_HOST: postgres
       IS_TASK_WORKER: true
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     entrypoint: ['npm', 'run', 'start']
