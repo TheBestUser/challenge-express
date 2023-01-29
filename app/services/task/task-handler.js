@@ -4,43 +4,63 @@ const { TaskQueueService } = require('./task-queue');
 const { delay } = require('../../utils');
 const { TaskManagerService } = require('./task-manager');
 
-const IS_WORKER = process.env.IS_WORKER !== 'false';
-
-const WATCH_TASKS_DELAY_MS = 60 * 1000; // check new tasks every 1 min
+const WATCH_TASKS_DELAY_MS = 30 * 1000; // check new tasks every 30 sec
 const TASKS_THROTTLE_MS = 2 * 60 * 1000; // mock task processing for 2 min
-// const TASKS_THROTTLE_MS = 10 * 1000;
+
+const TASK_HEARTBEAT_MS = 5 * 1000;
 
 const TaskHandlerService = {
   tryNext: () => {},
 };
 
-const runTask = async taskName => {
-  const task = TaskManagerService.getTaskByName(taskName);
+/**
+ * @param {Task} queueTask
+ * @returns {Promise<void>}
+ */
+const runTask = async queueTask => {
+  const task = TaskManagerService.getTaskByName(queueTask.name);
 
   if (!task) {
     return;
   }
 
-  console.log(`Task "${taskName}" started.`);
+  console.log(`Task "${task.name}" started.`);
 
   const throttle = new Promise(resolve => {
     setTimeout(resolve, TASKS_THROTTLE_MS);
   });
 
-  await task.process();
+  const interval = setInterval(
+    () => TaskQueueService.heartbeatTask(queueTask.id),
+    TASK_HEARTBEAT_MS,
+  );
 
-  await throttle;
-  console.log(`Task "${taskName}" finished.`);
+  try {
+    await task.process();
+    await throttle;
+  } finally {
+    clearInterval(interval);
+  }
+
+  console.log(`Task "${task.name}" finished.`);
 };
 
 const watchTasks = async () => {
   while (true) {
-    const res = await TaskQueueService.getNextTask();
+    await delay(100);
 
-    if (res) {
-      runTask(res.task.name).then(() => {
-        TaskQueueService.finishTask(res);
-      });
+    const task = await TaskQueueService.getNextTask();
+
+    if (task) {
+      runTask(task).then(
+        () => {
+          TaskQueueService.finishTask(task.id);
+        },
+        err => {
+          console.log(err);
+          TaskQueueService.finishTask(task.id, err.message);
+        },
+      );
 
       continue;
     }
@@ -54,7 +74,9 @@ const watchTasks = async () => {
   }
 };
 
-if (IS_WORKER) {
+const IS_TASK_WORKER = process.env.IS_TASK_WORKER === 'true';
+
+if (IS_TASK_WORKER) {
   watchTasks();
 }
 

@@ -9,8 +9,14 @@ services:
       - POSTGRES_DB=challenge
     ports:
       - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', "sh -c 'pg_isready -U postgres -d challenge'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
   app:
+    restart: 'on-failure'
     build:
       context: ./
     ports:
@@ -22,6 +28,24 @@ services:
     environment:
       NODE_ENV: development
       PG_HOST: postgres
+      IS_TASK_PRODUCER: true
+      IS_TASK_QUEUE_MANAGER: true
     depends_on:
       - postgres
     entrypoint: ['npm', 'run', 'start:dev']
+
+  worker:
+    restart: 'on-failure'
+    build:
+      context: ./
+    deploy:
+      replicas: 2
+    volumes:
+      - ./app:/opt/build/app
+    environment:
+      NODE_ENV: development
+      PG_HOST: postgres
+      IS_TASK_WORKER: true
+    depends_on:
+      - postgres
+    entrypoint: ['npm', 'run', 'start']

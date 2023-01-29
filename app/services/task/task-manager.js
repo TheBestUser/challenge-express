@@ -13,7 +13,6 @@ const tasks = Array.from({ length: TASKS_SCALE }, (_v, i) => {
   const name = `task-${i}`;
   return {
     name,
-    // expression: '*/2 * * * *', // each 2 min
     expression: '* * * * *', // every minute
     process: () => {
       console.log(`Processing task "${name}"...`);

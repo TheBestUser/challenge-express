@@ -8,8 +8,8 @@ module.exports = {
         id: {
           type: Sequelize.UUID,
           defaultValue: Sequelize.UUIDV4,
-          allowNull: false,
           primaryKey: true,
+          allowNull: false,
         },
         name: {
           allowNull: false,
@@ -23,6 +23,12 @@ module.exports = {
         },
         finishedAt: {
           type: Sequelize.DATE,
+        },
+        lastHeartbeatAt: {
+          type: Sequelize.DATE,
+        },
+        error: {
+          type: Sequelize.TEXT,
         },
       })
       .then(() => {

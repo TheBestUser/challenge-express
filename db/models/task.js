@@ -31,6 +31,12 @@ module.exports = (sequelize, DataTypes) => {
       finishedAt: {
         type: DataTypes.DATE,
       },
+      lastHeartbeatAt: {
+        type: DataTypes.DATE,
+      },
+      error: {
+        type: DataTypes.TEXT,
+      },
     },
     {
       sequelize,

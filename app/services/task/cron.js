@@ -5,7 +5,7 @@ const { TaskQueueService } = require('./task-queue');
 const { TaskHandlerService } = require('./task-handler');
 const { TaskManagerService } = require('./task-manager');
 
-const IS_TASK_PRODUCER = process.env.IS_TASK_PRODUCER !== 'false';
+const IS_TASK_PRODUCER = process.env.IS_TASK_PRODUCER === 'true';
 
 /**
  * Schedule task
@@ -24,8 +24,6 @@ const scheduleTask = task => {
 };
 
 const startCron = () => {
-  console.log('startCron');
-
   const tasks = TaskManagerService.getTasks();
 
   for (const task of tasks) {
